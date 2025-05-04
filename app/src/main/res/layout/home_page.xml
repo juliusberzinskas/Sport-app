@@ -219,7 +219,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Žingsnių iš "
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/secondary_text_dark"
                     android:textSize="14sp" />
 
                 <TextView
@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="18 000"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/secondary_text_dark"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -289,14 +289,15 @@
                     android:text="850 "
                     android:textColor="@android:color/white"
                     android:textSize="14sp" />
-                <TextView
-                    android:id="@+id/tvCaloriestext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="kcal"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp" />
+
+                   <TextView
+                       android:id="@+id/tvCaloriestext"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="6dp"
+                       android:text="kcal"
+                       android:textColor="@android:color/secondary_text_dark"
+                       android:textSize="14sp" />
                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -342,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="km"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/secondary_text_dark"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -389,7 +390,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:text="min"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/secondary_text_dark"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
