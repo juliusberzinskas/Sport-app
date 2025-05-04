@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- APP TEMA -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/font_family</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorSecondary">@color/pauseButton</item>
+        <item name="android:windowBackground">@color/appBackground</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>
+    </style>
+
+    <!-- TEKSTO STILIAI -->
+
+    <!-- Didelė antraštė -->
+    <style name="TextAppearance.Antrastes" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+    </style>
+
+    <!-- Laukelių pavadinimai -->
+    <style name="TextAppearance.BlockuPavadinimai" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/textHighlighted</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+    </style>
+
+    <!-- Paprastas tekstas -->
+    <style name="TextAppearance.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+    </style>
+
+    <!-- Mygtuko stilius PAGRINDINIS-->
+    <style name="buttonPrimary" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">26sp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <!-- Mygtuko stilius GRĮŽTI-->
+    <style name="buttonBack" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/backButton</item>
+        <item name="android:textColor">@color/appBackground</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">50dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+</resources>

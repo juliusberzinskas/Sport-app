@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- APP TEMA, pagrįsta Material3 -->
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/font_family</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorSecondary">@color/pauseButton</item>
+        <item name="android:windowBackground">@color/appBackground</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>
+    </style>
+
+    <style name="custom_card_view_style" parent="Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/custom_card_view</item>
+    </style>
+
+    <style name="custom_card_view" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">48dp</item>
+        <item name="cornerSizeTopLeft">48dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+
+    </style>
+
+</resources>

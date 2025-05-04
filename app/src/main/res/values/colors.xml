@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+
+    <!--  FONAI -->
+    <color name="appBackground">#221B36</color> <!-- Pagrindinis visos programėlės fonas -->
+    <color name="white">#FFFFFF</color> <!-- Šviesus tekstas arba šviesūs UI elementai -->
+
+    <!--  PAGRINDINĖS VEIKSMO SPALVOS -->
+    <color name="primary">#00E1C0</color> <!-- Pagrindiniai mygtukai: Registruotis, Prisijungti, Pradėti -->
+    <color name="primaryVariant">#00BFA6</color> <!-- Paspaudimo/hover efektas pagrindiniams mygtukams -->
+    <color name="onPrimary">#FFFFFF</color> <!-- Tekstas ant pagrindinių mygtukų -->
+
+    <!--  TEKSTO SPALVOS -->
+    <color name="textPrimary">#FFFFFF</color> <!-- Antraštės, puslapio pavadinimai -->
+    <color name="textSecondary">#CCCCCC</color> <!-- Aprašymai, pagalbinis tekstas -->
+    <color name="textHighlighted">#00E1C0</color> <!-- Akcentai, pvz. „Nubėgti 3 km.“ -->
+    <color name="textMuted">#AAAAAA</color> <!-- Išjungtas ar mažiau svarbus tekstas -->
+
+    <!-- TRENIRUOTĖS MYGTUKAI -->
+    <color name="pauseButton">#E7C54A</color> <!-- Pauzė -->
+    <color name="resumeButton">#4ACF50</color> <!-- Tęsti -->
+    <color name="stopButton">#EA3E3E</color> <!-- Stabdyti -->
+
+    <!--  NAVIGACIJOS MYGTUKAI -->
+    <color name="navItemActive">#00E1C0</color> <!-- Aktyvus puslapis navigacijos juostoje -->
+    <color name="navItemInactive">#8884A4</color> <!-- Neaktyvūs navigacijos mygtukai -->
+
+    <!--  PAPILDOMAS MYGTUKAS -->
+    <color name="addButton">#FFD93D</color> <!-- Plūduriuojantis „Add“ mygtukas -->
+
+    <!--  LAIKOTARPIO PASIRINKIMAS (Diena | Savaitė | Mėnesis) -->
+    <color name="periodSelectorSelected">#00E1C0</color> <!-- Aktyvus pasirinkimas -->
+    <color name="periodSelectorUnselected">#8884A4</color> <!-- Neaktyvus pasirinkimas -->
+
+    <!--  KALENDORIUS -->
+    <color name="calendarToday">#00E1C0</color> <!-- Pažymėta šiandienos diena -->
+    <color name="calendarPlanned">#B3A0D0</color> <!-- Dienos su suplanuotomis treniruotėmis -->
+    <color name="calendarEmpty">#4A445D</color> <!-- Dienos be treniruočių -->
+
+    <!--  STATISTIKOS SKAIČIAI -->
+    <color name="statNumber">#FF9800</color> <!-- Žingsniai, kalorijos, km ir pan. -->
+
+    <!--  BACK MYGTUKAS -->
+    <color name="backButton">#E0E0E0</color> <!-- Back ikonos spalva -->
+
+</resources>
