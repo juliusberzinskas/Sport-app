@@ -23,6 +23,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.content.Intent
 
 private lateinit var stepCounterService: StepCounterService
 
@@ -142,9 +143,15 @@ class HomeActivity : AppCompatActivity(), SensorEventListener {
                 }
             }
 
+           // btnStartGoal.setOnClickListener {
+          //      println("Pradedama treniruotė: $plannedToday")}
+
+            //---laikinai, kol tikrinu kaip veikia workout_page
             btnStartGoal.setOnClickListener {
-                println("Pradedama treniruotė: $plannedToday")
+                val intent = Intent(this, WorkoutActivity::class.java)
+                startActivity(intent)
             }
+
 
         } else {
             findViewById<View>(R.id.goalContainer).visibility = View.GONE
