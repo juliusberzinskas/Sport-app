@@ -25,7 +25,16 @@ import java.text.SimpleDateFormat
 import java.lang.reflect.Type
 import java.util.*
 
-class WorkoutActivity : AppCompatActivity(), SensorEventListener {
+import com.google.android.gms.location.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
+import android.graphics.Color
+
+class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCallback {
 
     // UI komponentai
     private lateinit var timerView: TextView
@@ -56,7 +65,12 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
     private val gson = Gson()
     private val historyKey = "workout_history"
 
-    // Timeris kas sekundę atnaujina laiką ir statistiką
+    // Žemėlapio sekimo kintamieji
+    private lateinit var map: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var lastLocation: LatLng? = null
+    private val polylinePoints = mutableListOf<LatLng>()
+
     private val timerRunnable = object : Runnable {
         override fun run() {
             if (isRunning) {
@@ -109,12 +123,72 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
 
         setupStepSensor()
         handler.post(timerRunnable)
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.workoutMap) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        map.setMapType(GoogleMap.MAP_TYPE_NORMAL) // Galima ir HYBRID ar SATELLITE, bet NORMAL rodo geriausiai
+        enableLocationTracking()
+    }
+
+    private fun enableLocationTracking() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                1002
+            )
+            return
+        }
+
+        map.isMyLocationEnabled = true
+
+        val locationRequest = LocationRequest.create().apply {
+            interval = 3000
+            fastestInterval = 2000
+            priority = Priority.PRIORITY_HIGH_ACCURACY
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    val location = result.lastLocation ?: return
+                    val latLng = LatLng(location.latitude, location.longitude)
+
+                    if (lastLocation == null) {
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f)) // map priartinimas
+                    }
+
+                    polylinePoints.add(latLng)
+                    drawPolyline()
+                    lastLocation = latLng
+                }
+            },
+            Looper.getMainLooper()
+        )
+    }
+
+    private fun drawPolyline() {
+        map.addPolyline(
+            PolylineOptions()
+                .color(Color.CYAN)
+                .width(10f)
+                .geodesic(true)
+                .addAll(polylinePoints)
+        )
+
     }
 
     private fun setupStepSensor() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
+            != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),
@@ -192,7 +266,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         sessions.add(session)
         val updatedJson = gson.toJson(sessions)
         sharedPrefs.edit().putString(historyKey, updatedJson).apply()
-        println("✅ Treniruotė išsaugota!")
+        println(" Treniruotė išsaugota!")
     }
 
     override fun onRequestPermissionsResult(
@@ -203,6 +277,8 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 2001 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             setupStepSensor()
+        } else if (requestCode == 1002 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            enableLocationTracking()
         }
     }
 }

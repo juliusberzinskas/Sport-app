@@ -17,18 +17,29 @@
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintBottom_toTopOf="@+id/workoutMap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- LAIKMATIS BLOKAS -->
+
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".15" />
+        app:layout_constraintGuide_percent="0.20" />
 
+    <!-- Žemėlapio BLOKAS -->
+    <fragment
+        android:id="@+id/workoutMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+    <!-- Duomenų BLOKAS -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardWorkout"
         android:layout_width="0dp"
@@ -39,7 +50,7 @@
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2">
+        app:layout_constraintTop_toBottomOf="@+id/workoutMap">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,11 +86,11 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="80dp"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         android:padding="12dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardBackgroundColor="@color/navItemInactive">
+                        app:cardBackgroundColor="@color/navItemInactive"
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -109,11 +120,11 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="80dp"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         android:padding="12dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardBackgroundColor="@color/navItemInactive">
+                        app:cardBackgroundColor="@color/navItemInactive"
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -144,19 +155,19 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
                     android:weightSum="2">
 
                     <!-- Žingsniai -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="80dp"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         android:padding="12dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardBackgroundColor="@color/navItemInactive">
+                        app:cardBackgroundColor="@color/navItemInactive"
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -186,11 +197,11 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="80dp"
-                        android:layout_weight="1"
                         android:layout_margin="4dp"
+                        android:layout_weight="1"
                         android:padding="12dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardBackgroundColor="@color/navItemInactive">
+                        app:cardBackgroundColor="@color/navItemInactive"
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"

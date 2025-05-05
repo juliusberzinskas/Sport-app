@@ -184,6 +184,12 @@ class HomeActivity : AppCompatActivity(), SensorEventListener {
             val intent = Intent(this, WorkoutHistoryActivity::class.java)
             startActivity(intent)
         }
+// =======LAIKINAS, mygtukas peržiūrėti žemėlapį.
+        findViewById<Button>(R.id.btnTestMap).setOnClickListener {
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 
