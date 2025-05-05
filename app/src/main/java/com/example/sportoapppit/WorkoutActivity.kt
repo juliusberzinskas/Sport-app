@@ -18,6 +18,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlin.math.roundToInt
 
+import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.text.SimpleDateFormat
+import java.lang.reflect.Type
+import java.util.*
+
 class WorkoutActivity : AppCompatActivity(), SensorEventListener {
 
     // UI komponentai
@@ -45,6 +52,10 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var sensorManager: SensorManager
 
+    private lateinit var sharedPrefs: SharedPreferences
+    private val gson = Gson()
+    private val historyKey = "workout_history"
+
     // Timeris kas sekundę atnaujina laiką ir statistiką
     private val timerRunnable = object : Runnable {
         override fun run() {
@@ -53,19 +64,18 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
                 updateTimerUI()
                 updateStats()
             } else {
-                // jei pauzė – tempą nustatom į --
                 tvSpeed.text = "--"
             }
             handler.postDelayed(this, 1000)
         }
     }
 
-    // paleidžiama kai atidarom puslapį
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedPrefs = getSharedPreferences("workout_data", Context.MODE_PRIVATE)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.workout_page)
 
-        // susiejame UI komponentus
         timerView = findViewById(R.id.tvTimer)
         btnPause = findViewById(R.id.btnPause)
         btnResume = findViewById(R.id.btnResume)
@@ -75,7 +85,6 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         tvDistance = findViewById(R.id.workout_Distance)
         tvSpeed = findViewById(R.id.workout_Speed)
 
-        // pauzės logika
         btnPause.setOnClickListener {
             isRunning = false
             isPaused = true
@@ -84,7 +93,6 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             btnStop.visibility = View.VISIBLE
         }
 
-        // tęsti logika
         btnResume.setOnClickListener {
             isRunning = true
             isPaused = false
@@ -93,9 +101,9 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
             btnStop.visibility = View.GONE
         }
 
-        // sustabdyti treniruotę
         btnStop.setOnClickListener {
             isRunning = false
+            saveWorkoutSession()
             finish()
         }
 
@@ -103,7 +111,6 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         handler.post(timerRunnable)
     }
 
-    // prijungiam žingsnių jutiklį
     private fun setupStepSensor() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
             != PackageManager.PERMISSION_GRANTED
@@ -123,7 +130,6 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    // gaunam žingsnių atnaujinimus
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER && !isPaused) {
             val totalSteps = event.values[0].toInt()
@@ -136,7 +142,6 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
-    // atnaujina laikmatį
     private fun updateTimerUI() {
         val hours = secondsElapsed / 3600
         val minutes = (secondsElapsed % 3600) / 60
@@ -144,9 +149,8 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         timerView.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    // Apskaičiuoja visus rodiklius
     private fun updateStats() {
-        val distance = stepCount * userStepLengthM / 1000  // km
+        val distance = stepCount * userStepLengthM / 1000
         val timeHours = secondsElapsed / 3600.0
         val speed = if (timeHours > 0) distance / timeHours else 0.0
         val calories = 0.04 * stepCount
@@ -155,20 +159,42 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener {
         tvDistance.text = String.format("%.2f", distance)
         tvCalories.text = calories.roundToInt().toString()
 
-        // tempą rodome tik jei veikia
         if (isRunning) {
             tvSpeed.text = String.format("%.1f", speed)
         }
     }
 
-    // kai puslapis sunaikinamas
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(timerRunnable)
         sensorManager.unregisterListener(this)
     }
 
-    // kai leidimai suteikiami
+    private fun saveWorkoutSession() {
+        val session = WorkoutSession(
+            type = "bėgimas",
+            dateTime = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date()),
+            steps = stepCount,
+            distanceKm = String.format("%.2f", stepCount * userStepLengthM / 1000).replace(",", ".").toDouble(),
+            durationSec = secondsElapsed,
+            calories = (0.04 * stepCount).roundToInt()
+        )
+
+        val existingJson = sharedPrefs.getString(historyKey, null)
+        val type: Type = object : TypeToken<MutableList<WorkoutSession>>() {}.type
+
+        val sessions: MutableList<WorkoutSession> = if (existingJson != null) {
+            gson.fromJson(existingJson, type)
+        } else {
+            mutableListOf()
+        }
+
+        sessions.add(session)
+        val updatedJson = gson.toJson(sessions)
+        sharedPrefs.edit().putString(historyKey, updatedJson).apply()
+        println("✅ Treniruotė išsaugota!")
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

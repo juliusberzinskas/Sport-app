@@ -178,6 +178,13 @@ class HomeActivity : AppCompatActivity(), SensorEventListener {
         }
         activeHandler.post(activeRunnable)
 
+// =======LAIKINAS, mygtukas peržiūrėti Istoriją.
+        val btnOpenHistory = findViewById<Button>(R.id.btnOpenHistory)
+        btnOpenHistory.setOnClickListener {
+            val intent = Intent(this, WorkoutHistoryActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onRequestPermissionsResult(

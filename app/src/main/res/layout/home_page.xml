@@ -402,5 +402,19 @@
 
     </LinearLayout>
 
+    <!-- ==========LAIKINAS mygtukas, istorijos puslapiui patikrinti -->
+    <Button
+        android:id="@+id/btnOpenHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/primary"
+        android:text="Istorija"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressSection" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
