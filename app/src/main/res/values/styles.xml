@@ -59,4 +59,10 @@
         <item name="android:paddingBottom">12dp</item>
     </style>
 
+    <!-- Bottom menu stilius-->
+    <style name="ShapeAppearanceOverlay.BottomNav" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

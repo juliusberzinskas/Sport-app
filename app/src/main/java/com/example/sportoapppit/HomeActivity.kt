@@ -27,7 +27,7 @@ import android.content.Intent
 
 private lateinit var stepCounterService: StepCounterService
 
-class HomeActivity : AppCompatActivity(), SensorEventListener {
+class HomeActivity : BaseActivity(), SensorEventListener {
 
     private var lastStepCount = -1
     private var currentSteps = 0
@@ -39,6 +39,8 @@ class HomeActivity : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_page)
+
+        setupBottomNavigation()
 
         // Prašom leidimo jei jo nėra
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
@@ -184,11 +186,11 @@ class HomeActivity : AppCompatActivity(), SensorEventListener {
             val intent = Intent(this, WorkoutHistoryActivity::class.java)
             startActivity(intent)
         }
-// =======LAIKINAS, mygtukas peržiūrėti žemėlapį.
-        findViewById<Button>(R.id.btnTestMap).setOnClickListener {
-            val intent = Intent(this, MapsActivity::class.java)
-            startActivity(intent)
-        }
+//// =======LAIKINAS, mygtukas peržiūrėti žemėlapį.
+//        findViewById<Button>(R.id.btnTestMap).setOnClickListener {
+//            val intent = Intent(this, MapsActivity::class.java)
+//            startActivity(intent)
+//        }
 
 
     }

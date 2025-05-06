@@ -45,4 +45,7 @@
     <!--  BACK MYGTUKAS -->
     <color name="backButton">#E0E0E0</color> <!-- Back ikonos spalva -->
 
+    <!--  BOTTOM NAVIGACIJA-->
+    <color name="lavender">#060118</color>
+
 </resources>

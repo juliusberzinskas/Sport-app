@@ -11,7 +11,7 @@ import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.*
 
-class WorkoutHistoryActivity : AppCompatActivity() {
+class WorkoutHistoryActivity : BaseActivity() {
 
     private lateinit var historyRecycler: RecyclerView
     private lateinit var emptyView: TextView
