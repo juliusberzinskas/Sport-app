@@ -33,6 +33,7 @@
         </activity>
         <activity android:name=".WorkoutActivity" />
         <activity android:name=".WorkoutHistoryActivity" />
+        <activity android:name=".WorkoutDetailsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

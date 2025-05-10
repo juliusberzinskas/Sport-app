@@ -8,5 +8,6 @@ data class WorkoutSession(
     val steps: Int,
     val distanceKm: Double,
     val durationSec: Int,
-    val calories: Int
+    val calories: Int,
+    val mapImagePath: String? = null
 ) : Serializable

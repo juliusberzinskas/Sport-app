@@ -30,7 +30,11 @@ class WorkoutHistoryActivity : BaseActivity() {
             emptyView.visibility = android.view.View.VISIBLE
         } else {
             emptyView.visibility = android.view.View.GONE
-            val grouped = sessions.groupBy { formatDateGroup(it.dateTime) }
+
+            // Naujausi viršuje
+            val sortedSessions = sessions.sortedByDescending { it.dateTime }
+            val grouped = sortedSessions.groupBy { formatDateGroup(it.dateTime) }
+
             historyRecycler.layoutManager = LinearLayoutManager(this)
             historyRecycler.adapter = WorkoutHistoryAdapter(grouped)
         }

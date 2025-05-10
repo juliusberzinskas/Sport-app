@@ -3,6 +3,7 @@ package com.example.sportoapppit
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -21,6 +22,8 @@ import kotlin.math.roundToInt
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.lang.reflect.Type
 import java.util.*
@@ -36,7 +39,6 @@ import android.graphics.Color
 
 class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCallback {
 
-    // UI komponentai
     private lateinit var timerView: TextView
     private lateinit var btnPause: ImageButton
     private lateinit var btnResume: ImageButton
@@ -46,30 +48,25 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
     private lateinit var tvDistance: TextView
     private lateinit var tvSpeed: TextView
 
-    // Treniruotės kintamieji
     private var secondsElapsed = 0
     private var isRunning = true
     private var isPaused = false
 
     private val handler = Handler(Looper.getMainLooper())
-
-    private val userWeightKg = 70
     private val userStepLengthM = 0.7
-
     private var stepCount = 0
     private var startSteps = -1
 
     private lateinit var sensorManager: SensorManager
-
     private lateinit var sharedPrefs: SharedPreferences
     private val gson = Gson()
     private val historyKey = "workout_history"
 
-    // Žemėlapio sekimo kintamieji
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var lastLocation: LatLng? = null
     private val polylinePoints = mutableListOf<LatLng>()
+    private var locationDistanceMeters = 0.0
 
     private val timerRunnable = object : Runnable {
         override fun run() {
@@ -86,7 +83,6 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
 
     override fun onCreate(savedInstanceState: Bundle?) {
         sharedPrefs = getSharedPreferences("workout_data", Context.MODE_PRIVATE)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.workout_page)
 
@@ -117,7 +113,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
 
         btnStop.setOnClickListener {
             isRunning = false
-            saveWorkoutSession()
+            saveMapImageAndSession()
             finish()
         }
 
@@ -130,7 +126,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL) // Galima ir HYBRID ar SATELLITE, bet NORMAL rodo geriausiai
+        map.setMapType(GoogleMap.MAP_TYPE_NORMAL)
         enableLocationTracking()
     }
 
@@ -139,15 +135,15 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                1002
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1002)
             return
         }
 
-        map.isMyLocationEnabled = true
+        try {
+            map.isMyLocationEnabled = true
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
 
         val locationRequest = LocationRequest.create().apply {
             interval = 3000
@@ -155,50 +151,73 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
             priority = Priority.PRIORITY_HIGH_ACCURACY
         }
 
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
-                override fun onLocationResult(result: LocationResult) {
-                    val location = result.lastLocation ?: return
-                    val latLng = LatLng(location.latitude, location.longitude)
+        fusedLocationClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                val location = result.lastLocation ?: return
+                val latLng = LatLng(location.latitude, location.longitude)
 
-                    if (lastLocation == null) {
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f)) // map priartinimas
-                    }
-
-                    polylinePoints.add(latLng)
-                    drawPolyline()
-                    lastLocation = latLng
+                lastLocation?.let {
+                    val distance = floatArrayOf(0f)
+                    android.location.Location.distanceBetween(
+                        it.latitude, it.longitude,
+                        latLng.latitude, latLng.longitude,
+                        distance
+                    )
+                    locationDistanceMeters += distance[0]
                 }
-            },
-            Looper.getMainLooper()
-        )
+
+                if (lastLocation == null) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
+                }
+
+                polylinePoints.add(latLng)
+                drawPolyline()
+                lastLocation = latLng
+            }
+        }, Looper.getMainLooper())
     }
 
     private fun drawPolyline() {
         map.addPolyline(
             PolylineOptions()
                 .color(Color.CYAN)
-                .width(10f)
-                .geodesic(true)
+                .width(8f)
                 .addAll(polylinePoints)
         )
+    }
 
+    private fun saveMapImageAndSession() {
+        try {
+            map.isMyLocationEnabled = false // laikinai išjungiam rodymą
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            map.snapshot { bitmap ->
+                bitmap?.let {
+                    val fileName = "map_${System.currentTimeMillis()}.png"
+                    val file = File(cacheDir, fileName)
+                    FileOutputStream(file).use { out ->
+                        it.compress(Bitmap.CompressFormat.PNG, 100, out)
+                        out.flush()
+                    }
+                    saveWorkoutSession(file.absolutePath)
+                } ?: run {
+                    saveWorkoutSession("")
+                }
+            }
+        }, 300)
     }
 
     private fun setupStepSensor() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
             != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),
-                2001
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION), 2001)
         }
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-
         if (stepSensor != null) {
             sensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
         }
@@ -224,13 +243,21 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
     }
 
     private fun updateStats() {
-        val distance = stepCount * userStepLengthM / 1000
+        val useGps = lastLocation != null &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        val distanceKm = if (useGps) locationDistanceMeters / 1000 else stepCount * userStepLengthM / 1000
         val timeHours = secondsElapsed / 3600.0
-        val speed = if (timeHours > 0) distance / timeHours else 0.0
-        val calories = 0.04 * stepCount
+        val speed = if (timeHours > 0) distanceKm / timeHours else 0.0
+
+
+        val mets = 6.0 // bėgimui ~6.0 MET, vaikščiojimui ~3.5
+        val weightKg = 70
+        val durationMin = secondsElapsed / 60.0
+        val calories = (mets * 3.5 * weightKg / 200) * durationMin
 
         tvSteps.text = stepCount.toString()
-        tvDistance.text = String.format("%.2f", distance)
+        tvDistance.text = String.format("%.2f", distanceKm)
         tvCalories.text = calories.roundToInt().toString()
 
         if (isRunning) {
@@ -244,14 +271,20 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
         sensorManager.unregisterListener(this)
     }
 
-    private fun saveWorkoutSession() {
+    private fun saveWorkoutSession(mapPath: String) {
+        val useGps = lastLocation != null &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+        val distanceKm = if (useGps) locationDistanceMeters / 1000 else stepCount * userStepLengthM / 1000
+
         val session = WorkoutSession(
             type = "bėgimas",
             dateTime = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date()),
             steps = stepCount,
-            distanceKm = String.format("%.2f", stepCount * userStepLengthM / 1000).replace(",", ".").toDouble(),
+            distanceKm = String.format("%.2f", distanceKm).replace(",", ".").toDouble(),
             durationSec = secondsElapsed,
-            calories = (0.04 * stepCount).roundToInt()
+            calories = (0.04 * stepCount).roundToInt(),
+            mapImagePath = mapPath
         )
 
         val existingJson = sharedPrefs.getString(historyKey, null)
@@ -266,7 +299,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
         sessions.add(session)
         val updatedJson = gson.toJson(sessions)
         sharedPrefs.edit().putString(historyKey, updatedJson).apply()
-        println(" Treniruotė išsaugota!")
+        println("Treniruotė išsaugota su žemėlapiu!")
     }
 
     override fun onRequestPermissionsResult(

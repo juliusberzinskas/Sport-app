@@ -1,12 +1,11 @@
 package com.example.sportoapppit
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.*
 
 class WorkoutHistoryAdapter(
     private val groupedSessions: Map<String, List<WorkoutSession>>
@@ -16,8 +15,8 @@ class WorkoutHistoryAdapter(
 
     init {
         groupedSessions.forEach { (date, sessions) ->
-            items.add(date) // Header
-            items.addAll(sessions) // Sessions
+            items.add(date)
+            items.addAll(sessions)
         }
     }
 
@@ -47,6 +46,12 @@ class WorkoutHistoryAdapter(
             holder.tvDuration.text = (session.durationSec / 60).toString()
             holder.tvCalories.text = session.calories.toString()
             holder.tvTime.text = session.dateTime.substringAfter(" ")
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(holder.itemView.context, WorkoutDetailsActivity::class.java)
+                intent.putExtra("workout", session)
+                holder.itemView.context.startActivity(intent)
+            }
         }
     }
 
