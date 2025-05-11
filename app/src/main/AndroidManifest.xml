@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -33,7 +35,11 @@
         </activity>
         <activity android:name=".WorkoutActivity" />
         <activity android:name=".WorkoutHistoryActivity" />
-        <activity android:name=".WorkoutDetailsActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".AccountSettingsActivity"/>
+        <activity android:name=".AppSettingsActivity"/>
+        <receiver android:name=".ReminderReceiver" />
+        <activity android:name=".AboutActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

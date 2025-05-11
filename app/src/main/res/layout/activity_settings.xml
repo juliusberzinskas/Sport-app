@@ -1,0 +1,155 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appBackground"
+    android:padding="24dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imgSettingsAvatar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_file_upload"
+            android:background="@drawable/avatar_circle_background"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/tvSettingsName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="Vartotojas"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nustatymai"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            android:textColor="@color/textPrimary"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Row 1: Account Settings -->
+        <LinearLayout
+            android:id="@+id/rowAccount"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/icon_account"
+                app:tint="@color/primary" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Paskyros Nustatymai"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:tint="@color/primary"
+                android:src="@drawable/icon_arrow_right" />
+        </LinearLayout>
+
+        <View style="@style/Divider" />
+
+        <!-- Row 2: App Settings -->
+        <LinearLayout
+            android:id="@+id/rowApp"
+            style="@style/SettingsRow"
+            android:layout_height="56dp">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/icon_app_settings"
+                app:tint="@color/primary" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Programėlės Nustatymai"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/icon_arrow_right"
+                app:tint="@color/primary" />
+        </LinearLayout>
+
+        <View style="@style/Divider" />
+
+        <!-- Row 3: About -->
+        <LinearLayout
+            android:id="@+id/rowAbout"
+            style="@style/SettingsRow"
+            android:layout_height="56dp">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="16dp"
+                app:tint="@color/primary"
+                android:src="@drawable/icon_about" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Apie"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/icon_arrow_right"
+                app:tint="@color/primary" />
+        </LinearLayout>
+
+        <View style="@style/Divider" />
+
+        <!-- Row 4: Logout -->
+        <TextView
+            android:id="@+id/btnLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Atsijungti"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="48dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+</ScrollView>

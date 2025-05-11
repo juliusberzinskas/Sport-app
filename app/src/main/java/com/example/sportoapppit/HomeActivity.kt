@@ -24,6 +24,8 @@ import android.hardware.SensorManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.Intent
+import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 private lateinit var stepCounterService: StepCounterService
 
@@ -39,7 +41,6 @@ class HomeActivity : BaseActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_page)
-
         setupBottomNavigation()
 
         // Prašom leidimo jei jo nėra
@@ -79,7 +80,7 @@ class HomeActivity : BaseActivity(), SensorEventListener {
                 findViewById<TextView>(R.id.tvDistance).text = String.format("%.2f", distance)
 
                 // progresas
-                val goal = 18000
+                val goal = UserPreferences.getStepGoal(this)
                 findViewById<TextView>(R.id.tvStepsLabel).text = goal.toString()
                 val progress = ((steps.toFloat() / goal) * 100).toInt()
                 findViewById<ProgressBar>(R.id.progressSteps).progress = progress
@@ -193,6 +194,44 @@ class HomeActivity : BaseActivity(), SensorEventListener {
 //        }
 
 
+        findViewById<FloatingActionButton>(R.id.fabSettings).setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        val nameTextView = findViewById<TextView>(R.id.home_page_vardas)
+        val savedName = UserPreferences.getUserName(this)
+        nameTextView.text = " $savedName"
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameTextView = findViewById<TextView>(R.id.home_page_vardas)
+        val savedName = UserPreferences.getUserName(this)
+        nameTextView.text = " $savedName"
+
+        // iš karto atnaujina žingsnius
+        val goal = UserPreferences.getStepGoal(this)
+        val steps = currentSteps
+        val progressBar = findViewById<ProgressBar>(R.id.progressSteps)
+        val label = findViewById<TextView>(R.id.tvStepsLabel)
+
+        label.text = goal.toString()
+
+        val newProgress = ((steps.toFloat() / goal) * 100).toInt()
+
+        // Progress bar animacija
+        val oldProgress = progressBar.progress
+        val animator = android.animation.ObjectAnimator.ofInt(progressBar, "progress", oldProgress, newProgress)
+        animator.duration = 500 // ms
+        animator.start()
+
+        // Toast kai atnaujinamas tikslas
+        if (goal != oldProgress && steps > 0) {
+            Toast.makeText(this, "Tikslas atnaujintas: $goal žingsnių", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -221,3 +260,5 @@ class HomeActivity : BaseActivity(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 }
+
+
