@@ -14,7 +14,8 @@ import com.google.android.material.card.MaterialCardView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.Sensor
@@ -42,6 +43,7 @@ class HomeActivity : BaseActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_page)
         setupBottomNavigation()
+        loadUserProfileFromFirestore()
 
         // Prašom leidimo jei jo nėra
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
@@ -202,8 +204,6 @@ class HomeActivity : BaseActivity(), SensorEventListener {
         val nameTextView = findViewById<TextView>(R.id.home_page_vardas)
         val savedName = UserPreferences.getUserName(this)
         nameTextView.text = " $savedName"
-
-
     }
 
     override fun onResume() {
@@ -233,6 +233,35 @@ class HomeActivity : BaseActivity(), SensorEventListener {
             Toast.makeText(this, "Tikslas atnaujintas: $goal žingsnių", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun loadUserProfileFromFirestore() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val name = document.getString("name") ?: "Sportininkas"
+                    val weight = document.getDouble("weight") ?: 0.0
+                    val height = document.getDouble("height") ?: 0.0
+
+                    // suranda naudotojo varda is firebase
+                    findViewById<TextView>(R.id.home_page_vardas).text = name
+
+                    // sitas bus perkeltas veliau. -Julius
+                    findViewById<TextView>(R.id.tvCalories)?.text = "${weight.toInt() * 13} kcal"
+                    findViewById<TextView>(R.id.tvDistance)?.text = String.format("%.1f", height * 0.01)
+
+                    // offline naudojimui
+                    UserPreferences.saveUserName(this, name)
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Nepavyko gauti profilio duomenų", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray

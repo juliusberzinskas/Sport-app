@@ -54,5 +54,28 @@ object UserPreferences {
             .getBoolean(KEY_REMINDER_ENABLED, false)
     }
 
+    fun saveUserWeight(context: Context, weight: Double) {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putFloat("user_weight", weight.toFloat()).apply()
+    }
+
+    fun getUserWeight(context: Context): Double {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return prefs.getFloat("user_weight", 0f).toDouble()
+    }
+
+    fun saveUserHeight(context: Context, height: Double) {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        prefs.edit() { putFloat("user_height", height.toFloat()) }
+    }
+
+    fun getUserHeight(context: Context): Double {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return prefs.getFloat("user_height", 0f).toDouble()
+    }
+
+    fun clearAll(context: Context) {
+        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE).edit() { clear() }
+    }
 
 }

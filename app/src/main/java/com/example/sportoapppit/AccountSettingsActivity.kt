@@ -7,17 +7,20 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.exifinterface.media.ExifInterface
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class AccountSettingsActivity : AppCompatActivity() {
 
     private lateinit var imgProfile: ImageView
     private val IMAGE_PICK_CODE = 1001
-    private val dummyPassword = "password123" // sujungti veliau su backendu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +31,16 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         imgProfile = findViewById(R.id.imgProfile)
 
+        val etName = findViewById<EditText>(R.id.etName)
+        val etWeight = findViewById<EditText>(R.id.etWeight)
+        val etHeight = findViewById<EditText>(R.id.etHeight)
+
+        etName.setText(UserPreferences.getUserName(this))
+        etWeight.setText(UserPreferences.getUserWeight(this).toInt().toString())
+        etHeight.setText(UserPreferences.getUserHeight(this).toInt().toString())
+
         // nuotraukos pasirinkimas
-        val fabPickImage = findViewById<FloatingActionButton>(R.id.fabPickImage)
-        fabPickImage.setOnClickListener {
+        findViewById<FloatingActionButton>(R.id.fabPickImage).setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "image/*"
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -39,20 +49,46 @@ class AccountSettingsActivity : AppCompatActivity() {
             startActivityForResult(intent, IMAGE_PICK_CODE)
         }
 
-        // Vardo keitimas
-        val etName = findViewById<EditText>(R.id.etName)
-        val btnConfirmName = findViewById<Button>(R.id.btnConfirmName)
-        btnConfirmName.setOnClickListener {
-            val newName = etName.text.toString()
-            if (newName.isNotEmpty()) {
-                UserPreferences.saveUserName(this, newName)
-                Toast.makeText(this, "Vardas atnaujintas!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Įveskite vardą", Toast.LENGTH_SHORT).show()
+        // išsaugo ugi ir svorį
+        findViewById<Button>(R.id.btnConfirmName).setOnClickListener {
+            val name = etName.text.toString().trim()
+            val weightStr = etWeight.text.toString().trim()
+            val heightStr = etHeight.text.toString().trim()
+
+            val weight = weightStr.toDoubleOrNull()
+            val height = heightStr.toDoubleOrNull()
+
+            if (name.isEmpty() || weight == null || height == null || weight <= 0 || height <= 0) {
+                Toast.makeText(this, "Užpildykite visus laukus teisingai", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // local išsaugojimas
+            UserPreferences.saveUserName(this, name)
+            UserPreferences.saveUserWeight(this, weight)
+            UserPreferences.saveUserHeight(this, height)
+
+            // išsaugo i Firestone
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null) {
+                val updates = mapOf(
+                    "name" to name,
+                    "weight" to weight,
+                    "height" to height
+                )
+                FirebaseFirestore.getInstance().collection("users")
+                    .document(userId)
+                    .set(updates, SetOptions.merge())
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Duomenys atnaujinti", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Klaida išsaugant", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
 
-        // Slaptažodžio keitimas
+        // password keitimas
         val etCurrent = findViewById<EditText>(R.id.etCurrentPassword)
         val etNew = findViewById<EditText>(R.id.etNewPassword)
         val etRepeat = findViewById<EditText>(R.id.etRepeatPassword)
@@ -60,17 +96,35 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         btnChangePassword.setOnClickListener {
             val current = etCurrent.text.toString()
-            val new = etNew.text.toString()
+            val newPass = etNew.text.toString()
             val repeat = etRepeat.text.toString()
 
-            when {
-                current != dummyPassword -> Toast.makeText(this, "Neteisingas dabartinis slaptažodis", Toast.LENGTH_SHORT).show()
-                new.length < 6 -> Toast.makeText(this, "Slaptažodis per trumpas", Toast.LENGTH_SHORT).show()
-                new != repeat -> Toast.makeText(this, "Slaptažodžiai nesutampa", Toast.LENGTH_SHORT).show()
-                else -> {
-                    Toast.makeText(this, "Slaptažodis pakeistas!", Toast.LENGTH_SHORT).show()
-                    // siusti i backend
+            val user = FirebaseAuth.getInstance().currentUser
+            val email = user?.email
+
+            if (newPass.length < 6) {
+                Toast.makeText(this, "Slaptažodis per trumpas", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (newPass != repeat) {
+                Toast.makeText(this, "Slaptažodžiai nesutampa", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (email != null && current.isNotEmpty()) {
+                val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, current)
+
+                user.reauthenticate(credential).addOnSuccessListener {
+                    user.updatePassword(newPass).addOnSuccessListener {
+                        Toast.makeText(this, "Slaptažodis atnaujintas", Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener {
+                        Toast.makeText(this, "Nepavyko atnaujinti slaptažodžio", Toast.LENGTH_SHORT).show()
+                    }
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Neteisingas dabartinis slaptažodis", Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                Toast.makeText(this, "Trūksta el. pašto arba dabartinio slaptažodžio", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -86,7 +140,6 @@ class AccountSettingsActivity : AppCompatActivity() {
                     if (rotatedBitmap != null) {
                         imgProfile.setImageBitmap(rotatedBitmap)
 
-                        // išsaugo URI
                         contentResolver.takePersistableUriPermission(
                             imageUri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -95,11 +148,8 @@ class AccountSettingsActivity : AppCompatActivity() {
                     } else {
                         Toast.makeText(this, "Nepavyko apdoroti paveikslėlio", Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: SecurityException) {
-                    Toast.makeText(this, "Trūksta leidimo prie paveikslėlio", Toast.LENGTH_SHORT).show()
-                    e.printStackTrace()
                 } catch (e: Exception) {
-                    Toast.makeText(this, "Įvyko klaida įkeliant paveikslėlį", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Klaida įkeliant paveikslėlį", Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
             }
@@ -107,7 +157,6 @@ class AccountSettingsActivity : AppCompatActivity() {
     }
 
     private fun decodeBitmapWithCorrectOrientation(uri: Uri): Bitmap? {
-        // 1. pakrauna nuotrauka su Exif + bitmap
         val inputStream1 = contentResolver.openInputStream(uri) ?: return null
         val exif = ExifInterface(inputStream1)
         val orientation = exif.getAttributeInt(
@@ -116,12 +165,10 @@ class AccountSettingsActivity : AppCompatActivity() {
         )
         inputStream1.close()
 
-        // 2. atnaujina ikelta INPUT su decodeStream
         val inputStream2 = contentResolver.openInputStream(uri) ?: return null
         val bitmap = BitmapFactory.decodeStream(inputStream2) ?: return null
         inputStream2.close()
 
-        // 3. Pasuka nuotrauka pagal Exif orientacija nes BitmapFactory nesugeba
         val matrix = Matrix()
         when (orientation) {
             ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)

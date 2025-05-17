@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.sportoapppit" />
+                  <option name="mobileSdkAppId" value="1:848970054483:android:317534e0b90feeeefeffa6" />
+                  <option name="projectId" value="sportoapp-418ba" />
+                  <option name="projectNumber" value="848970054483" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

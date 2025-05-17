@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.google.firebase.auth.FirebaseAuth
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -20,6 +21,12 @@ class SettingsActivity : AppCompatActivity() {
 
         val name = UserPreferences.getUserName(this)
         findViewById<TextView>(R.id.tvSettingsName).text = name
+
+        val weight = UserPreferences.getUserWeight(this)
+        val height = UserPreferences.getUserHeight(this)
+
+        findViewById<TextView>(R.id.tvSettingsWeight).text = "Svoris: ${weight.toInt()} kg"
+        findViewById<TextView>(R.id.tvSettingsHeight).text = "Ūgis: ${height.toInt()} cm"
 
         val avatarUri = UserPreferences.getAvatarUri(this)
         val imageView = findViewById<ImageView>(R.id.imgSettingsAvatar)
@@ -45,6 +52,14 @@ class SettingsActivity : AppCompatActivity() {
             imageView.setImageResource(R.drawable.icon_file_upload)
         }
 
+        // Logout
+        findViewById<TextView>(R.id.btnLogout).setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+
+            val intent = Intent(this, StartActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Nustatymai"
@@ -60,8 +75,6 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<LinearLayout>(R.id.rowAbout).setOnClickListener {
             startActivity(Intent(this, AboutActivity::class.java))
         }
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

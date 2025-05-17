@@ -57,6 +57,27 @@
                 app:backgroundTint="@color/primary" />
         </FrameLayout>
 
+        <EditText
+            android:id="@+id/etWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Svoris (kg)"
+            android:inputType="numberDecimal"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/textMuted" />
+
+        <EditText
+            android:id="@+id/etHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Ūgis (cm)"
+            android:inputType="numberDecimal"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/textMuted" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,7 +87,8 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"/>
 
         <!-- Name Change -->
         <EditText
