@@ -41,23 +41,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
+        <!-- Profilio nuotrauka -->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgProfile"
             android:layout_width="match_parent"
-            android:layout_height="123dp"
-            android:background="@color/primary"
-            android:contentDescription="Profile image"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/icon_file_upload" />
+            android:contentDescription="Profile image"
+            android:background="@color/primary"
+            app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
+
+        <!-- FAB mygtukas viršuje, centre -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabPickImage"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_gravity="center"
             android:src="@drawable/icon_file_upload"
-            app:backgroundTint="@color/primary" />
+            app:backgroundTint="@color/primary"
+            app:maxImageSize="32dp"
+            app:tint="@color/onPrimary" />
     </FrameLayout>
+
 
     <EditText
         android:id="@+id/etName"
