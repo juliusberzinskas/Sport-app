@@ -25,8 +25,8 @@ class SettingsActivity : AppCompatActivity() {
         val weight = UserPreferences.getUserWeight(this)
         val height = UserPreferences.getUserHeight(this)
 
-        findViewById<TextView>(R.id.tvSettingsWeight).text = "Svoris: ${weight.toInt()} kg"
-        findViewById<TextView>(R.id.tvSettingsHeight).text = "Ūgis: ${height.toInt()} cm"
+        findViewById<TextView>(R.id.tvSettingsWeightHeight).text =
+            "Svoris: ${weight.toInt()} kg   Ūgis: ${height.toInt()} cm"
 
         val avatarUri = UserPreferences.getAvatarUri(this)
         val imageView = findViewById<ImageView>(R.id.imgSettingsAvatar)

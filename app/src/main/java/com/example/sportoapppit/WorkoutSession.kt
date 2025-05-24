@@ -1,13 +1,11 @@
-package com.example.sportoapppit
-
 import java.io.Serializable
 
 data class WorkoutSession(
-    val type: String, // "bėgimas" arba "ėjimas"
-    val dateTime: String, // pvz. 2025-05-04 18:42
-    val steps: Int,
-    val distanceKm: Double,
-    val durationSec: Int,
-    val calories: Int,
+    val type: String = "",
+    val dateTime: String = "",
+    val steps: Int = 0,
+    val distanceKm: Double = 0.0,
+    val durationSec: Int = 0,
+    val calories: Double = 0.0,
     val mapImagePath: String? = null
 ) : Serializable

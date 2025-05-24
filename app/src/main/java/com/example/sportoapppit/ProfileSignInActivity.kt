@@ -31,6 +31,7 @@ class ProfileSignInActivity : AppCompatActivity() {
         val etWeight = findViewById<EditText>(R.id.etWeight)
         val etHeight = findViewById<EditText>(R.id.etHeight)
         val btnSave = findViewById<Button>(R.id.btnSaveProfile)
+        val genderGroup = findViewById<RadioGroup>(R.id.genderGroup)
 
         // --- avataro pasirinkimas ---
         fabPickImage.setOnClickListener {
@@ -73,25 +74,39 @@ class ProfileSignInActivity : AppCompatActivity() {
                 Toast.makeText(this, "Naudotojas neprisijungęs", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            // defaut formatas kaip ir firebase
+
+            val selectedGender = when (genderGroup.checkedRadioButtonId) {
+                R.id.radioMale -> "male"
+                R.id.radioFemale -> "female"
+                else -> null
+            }
+
             val userMap = hashMapOf(
                 "name" to name,
                 "birthday" to birthday,
                 "weight" to weight,
                 "height" to height,
+                "gender" to selectedGender,
                 "avatarUri" to avatar
             )
 
+            if (selectedGender == null) {
+                Toast.makeText(this, "Pasirinkite lytį", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             db.collection("users").document(userId).set(userMap)
                 .addOnSuccessListener {
+                    // ✅ Save locally for use in Settings/Home/etc.
+                    UserPreferences.saveUserName(this, name)
+                    UserPreferences.saveUserWeight(this, weight)
+                    UserPreferences.saveUserHeight(this, height)
                     if (avatar != null) {
                         UserPreferences.saveAvatarUri(this, avatar)
                     }
-                    UserPreferences.saveUserName(this, name)
-                    Toast.makeText(this, "Profilis išsaugotas!", Toast.LENGTH_SHORT).show()
 
-                    val intent = Intent(this, HomeActivity::class.java)
-                    startActivity(intent)
+                    Toast.makeText(this, "Profilis išsaugotas!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, HomeActivity::class.java))
                     finish()
                 }
                 .addOnFailureListener {

@@ -1,7 +1,9 @@
 // WorkoutActivity.kt
 package com.example.sportoapppit
 
+import WorkoutSession
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.hardware.Sensor
@@ -18,7 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlin.math.roundToInt
-
+import java.util.Date
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -36,6 +38,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
 import android.graphics.Color
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.core.content.edit
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCallback {
 
@@ -56,6 +63,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
     private val userStepLengthM = 0.7
     private var stepCount = 0
     private var startSteps = -1
+    private var currentSteps = 0
 
     private lateinit var sensorManager: SensorManager
     private lateinit var sharedPrefs: SharedPreferences
@@ -126,7 +134,7 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL)
+        map.mapType = GoogleMap.MAP_TYPE_NORMAL
         enableLocationTracking()
     }
 
@@ -276,30 +284,71 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
         val distanceKm = if (useGps) locationDistanceMeters / 1000 else stepCount * userStepLengthM / 1000
+        val durationSec = secondsElapsed
+        val durationMin = durationSec / 60.0
+        val mets = 6.0
+        val weightKg = 70
+        val calories = (mets * 3.5 * weightKg / 200) * durationMin
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val formattedDate = dateFormat.format(Date())
 
-        val session = WorkoutSession(
-            type = "bėgimas",
-            dateTime = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date()),
+        val workoutSession = WorkoutSession(
+            type = "bėgimas", // or "ėjimas"
+            dateTime = formattedDate,
             steps = stepCount,
-            distanceKm = String.format("%.2f", distanceKm).replace(",", ".").toDouble(),
-            durationSec = secondsElapsed,
-            calories = (0.04 * stepCount).roundToInt(),
+            distanceKm = distanceKm,
+            durationSec = durationSec,
+            calories = calories,
             mapImagePath = mapPath
         )
 
+        // Save locally
         val existingJson = sharedPrefs.getString(historyKey, null)
         val type: Type = object : TypeToken<MutableList<WorkoutSession>>() {}.type
-
         val sessions: MutableList<WorkoutSession> = if (existingJson != null) {
             gson.fromJson(existingJson, type)
         } else {
             mutableListOf()
         }
-
-        sessions.add(session)
+        sessions.add(workoutSession)
         val updatedJson = gson.toJson(sessions)
-        sharedPrefs.edit().putString(historyKey, updatedJson).apply()
-        println("Treniruotė išsaugota su žemėlapiu!")
+        sharedPrefs.edit() { putString(historyKey, updatedJson) }
+
+        // Save to Firestore
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(user.uid)
+                .collection("workouts")
+                .add(workoutSession)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Treniruotė išsaugota!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Nepavyko išsaugoti: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+            val userAge = UserPreferences.getUserAge(this)
+            val userWeight = UserPreferences.getUserWeight(this)
+            val userHeight = UserPreferences.getUserHeight(this)
+            val userGender = UserPreferences.getUserGender(this) // If you track this
+
+            val bmi = userWeight / ((userHeight / 100.0) * (userHeight / 100.0))
+            val fatPercent = estimateFatPercentage(userWeight, userHeight, userAge, userGender)
+
+            val stat = ProfileStats.ProfileStat(
+                date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()),
+                weight = userWeight,
+                height = userHeight,
+                bmi = bmi,
+                fatPercent = fatPercent
+            )
+
+            db.collection("users").document(user.uid)
+                .collection("stats")
+                .add(stat)
+
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -314,4 +363,14 @@ class WorkoutActivity : AppCompatActivity(), SensorEventListener, OnMapReadyCall
             enableLocationTracking()
         }
     }
+
+    fun estimateFatPercentage(weight: Double, height: Double, age: Int, gender: String): Double {
+        val bmi = weight / ((height / 100) * (height / 100))
+        return if (gender.lowercase() == "male") {
+            (1.20 * bmi) + (0.23 * age) - 16.2
+        } else {
+            (1.20 * bmi) + (0.23 * age) - 5.4
+        }
+    }
+
 }

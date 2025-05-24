@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity : AppCompatActivity() {
@@ -60,6 +61,11 @@ class RegisterActivity : AppCompatActivity() {
         // login redirection jei nepavyksta
         findViewById<TextView>(R.id.textView4).setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+
+        // grizta atgal i starto activity
+        findViewById<FloatingActionButton>(R.id.fabBack).setOnClickListener {
             finish()
         }
     }

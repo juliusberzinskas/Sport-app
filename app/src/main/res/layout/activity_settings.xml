@@ -33,25 +33,12 @@
             android:textColor="@color/textPrimary" />
 
         <TextView
-            android:id="@+id/tvSettingsWeight"
+            android:id="@+id/tvSettingsWeightHeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Svoris: -"
-            android:textColor="@color/textPrimary"
+            android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="12dp" />
-
-        <TextView
-            android:id="@+id/tvSettingsHeight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ūgis: -"
-            android:textColor="@color/textPrimary"
-            android:textSize="16sp"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="12dp" />
-
+            android:padding="8dp" />
 
         <!-- Title -->
         <TextView

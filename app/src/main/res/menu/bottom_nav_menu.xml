@@ -7,4 +7,9 @@
         android:id="@+id/navigation_workout"
         android:icon="@drawable/icon_stats"
         android:title=" " />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/img_profile"
+        android:title=" " />
 </menu>

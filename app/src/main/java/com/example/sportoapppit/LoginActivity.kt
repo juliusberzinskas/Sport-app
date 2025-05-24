@@ -50,5 +50,10 @@ class LoginActivity : AppCompatActivity() {
         findViewById<FloatingActionButton>(R.id.fabBack).setOnClickListener {
             finish()
         }
+
+        // nusiuncia i forgot_pass_page
+        findViewById<TextView>(R.id.tvForgotPassword).setOnClickListener {
+            startActivity(Intent(this, ForgotPasswordActivity::class.java))
+        }
     }
 }

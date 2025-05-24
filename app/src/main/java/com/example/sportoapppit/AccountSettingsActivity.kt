@@ -7,20 +7,24 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AccountSettingsActivity : AppCompatActivity() {
 
     private lateinit var imgProfile: ImageView
     private val IMAGE_PICK_CODE = 1001
+    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +38,16 @@ class AccountSettingsActivity : AppCompatActivity() {
         val etName = findViewById<EditText>(R.id.etName)
         val etWeight = findViewById<EditText>(R.id.etWeight)
         val etHeight = findViewById<EditText>(R.id.etHeight)
+        val etCurrent = findViewById<EditText>(R.id.etCurrentPassword)
+        val etNew = findViewById<EditText>(R.id.etNewPassword)
+        val etRepeat = findViewById<EditText>(R.id.etRepeatPassword)
+        val btnConfirmChanges = findViewById<Button>(R.id.btnConfirmChanges)
 
+        // Pre-fill fields
         etName.setText(UserPreferences.getUserName(this))
         etWeight.setText(UserPreferences.getUserWeight(this).toInt().toString())
         etHeight.setText(UserPreferences.getUserHeight(this).toInt().toString())
 
-        // nuotraukos pasirinkimas
         findViewById<FloatingActionButton>(R.id.fabPickImage).setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "image/*"
@@ -49,71 +57,80 @@ class AccountSettingsActivity : AppCompatActivity() {
             startActivityForResult(intent, IMAGE_PICK_CODE)
         }
 
-        // išsaugo ugi ir svorį
-        findViewById<Button>(R.id.btnConfirmName).setOnClickListener {
+        btnConfirmChanges.setOnClickListener {
             val name = etName.text.toString().trim()
             val weightStr = etWeight.text.toString().trim()
             val heightStr = etHeight.text.toString().trim()
-
             val weight = weightStr.toDoubleOrNull()
             val height = heightStr.toDoubleOrNull()
+
+            val current = etCurrent.text.toString()
+            val newPass = etNew.text.toString()
+            val repeat = etRepeat.text.toString()
+
+            val user = auth.currentUser
+            val email = user?.email
+            val userId = user?.uid ?: return@setOnClickListener
 
             if (name.isEmpty() || weight == null || height == null || weight <= 0 || height <= 0) {
                 Toast.makeText(this, "Užpildykite visus laukus teisingai", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // local išsaugojimas
+            // Save locally
             UserPreferences.saveUserName(this, name)
             UserPreferences.saveUserWeight(this, weight)
             UserPreferences.saveUserHeight(this, height)
 
-            // išsaugo i Firestone
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            if (userId != null) {
-                val updates = mapOf(
-                    "name" to name,
-                    "weight" to weight,
-                    "height" to height
-                )
-                FirebaseFirestore.getInstance().collection("users")
-                    .document(userId)
-                    .set(updates, SetOptions.merge())
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Duomenys atnaujinti", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this, "Klaida išsaugant", Toast.LENGTH_SHORT).show()
-                    }
-            }
-        }
+            // Save to Firestore
+            val updates = mapOf(
+                "name" to name,
+                "weight" to weight,
+                "height" to height
+            )
 
-        // password keitimas
-        val etCurrent = findViewById<EditText>(R.id.etCurrentPassword)
-        val etNew = findViewById<EditText>(R.id.etNewPassword)
-        val etRepeat = findViewById<EditText>(R.id.etRepeatPassword)
-        val btnChangePassword = findViewById<Button>(R.id.btnChangePassword)
+            db.collection("users").document(userId)
+                .set(updates, SetOptions.merge())
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Duomenys atnaujinti", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Klaida išsaugant", Toast.LENGTH_SHORT).show()
+                }
 
-        btnChangePassword.setOnClickListener {
-            val current = etCurrent.text.toString()
-            val newPass = etNew.text.toString()
-            val repeat = etRepeat.text.toString()
+            // Add stat entry to history
+            val age = UserPreferences.getUserAge(this)
+            val gender = UserPreferences.getUserGender(this) // Add getUserGender if missing
 
-            val user = FirebaseAuth.getInstance().currentUser
-            val email = user?.email
+            val bmi = weight / ((height / 100) * (height / 100))
+            val fatPercent = estimateFatPercentage(weight, height, age, gender)
 
-            if (newPass.length < 6) {
-                Toast.makeText(this, "Slaptažodis per trumpas", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (newPass != repeat) {
-                Toast.makeText(this, "Slaptažodžiai nesutampa", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            val stat = ProfileStats.ProfileStat(
+                date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()),
+                weight = weight,
+                height = height,
+                bmi = bmi,
+                fatPercent = fatPercent
+            )
 
-            if (email != null && current.isNotEmpty()) {
-                val credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, current)
+            db.collection("users").document(userId).collection("stats").add(stat)
 
+            // Password change (optional)
+            if (current.isNotEmpty() || newPass.isNotEmpty() || repeat.isNotEmpty()) {
+                if (email == null) {
+                    Toast.makeText(this, "Trūksta el. pašto", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                if (newPass.length < 6) {
+                    Toast.makeText(this, "Slaptažodis per trumpas", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                if (newPass != repeat) {
+                    Toast.makeText(this, "Slaptažodžiai nesutampa", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                val credential = EmailAuthProvider.getCredential(email, current)
                 user.reauthenticate(credential).addOnSuccessListener {
                     user.updatePassword(newPass).addOnSuccessListener {
                         Toast.makeText(this, "Slaptažodis atnaujintas", Toast.LENGTH_SHORT).show()
@@ -123,8 +140,6 @@ class AccountSettingsActivity : AppCompatActivity() {
                 }.addOnFailureListener {
                     Toast.makeText(this, "Neteisingas dabartinis slaptažodis", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Trūksta el. pašto arba dabartinio slaptažodžio", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -185,5 +200,15 @@ class AccountSettingsActivity : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // Example body fat formula (same as before)
+    private fun estimateFatPercentage(weight: Double, height: Double, age: Int, gender: String): Double {
+        val bmi = weight / ((height / 100) * (height / 100))
+        return if (gender == "male") {
+            (1.20 * bmi) + (0.23 * age) - 16.2
+        } else {
+            (1.20 * bmi) + (0.23 * age) - 5.4
+        }
     }
 }

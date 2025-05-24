@@ -1,5 +1,6 @@
 package com.example.sportoapppit
 
+import WorkoutSession
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -43,7 +44,11 @@ class WorkoutHistoryAdapter(
             val session = items[position] as WorkoutSession
             holder.tvType.text = session.type.replaceFirstChar { it.uppercaseChar() }
             holder.tvDistance.text = String.format("%.2f", session.distanceKm)
-            holder.tvDuration.text = (session.durationSec / 60).toString()
+
+            val minutes = session.durationSec / 60
+            val seconds = session.durationSec % 60
+            holder.tvDuration.text = String.format("%d:%02d", minutes, seconds)
+
             holder.tvCalories.text = session.calories.toString()
             holder.tvTime.text = session.dateTime.substringAfter(" ")
 

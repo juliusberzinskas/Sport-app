@@ -1,5 +1,6 @@
 package com.example.sportoapppit
 
+import WorkoutSession
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.widget.ImageView

@@ -183,19 +183,7 @@ class HomeActivity : BaseActivity(), SensorEventListener {
         }
         activeHandler.post(activeRunnable)
 
-// =======LAIKINAS, mygtukas peržiūrėti Istoriją.
-        val btnOpenHistory = findViewById<Button>(R.id.btnOpenHistory)
-        btnOpenHistory.setOnClickListener {
-            val intent = Intent(this, WorkoutHistoryActivity::class.java)
-            startActivity(intent)
-        }
-//// =======LAIKINAS, mygtukas peržiūrėti žemėlapį.
-//        findViewById<Button>(R.id.btnTestMap).setOnClickListener {
-//            val intent = Intent(this, MapsActivity::class.java)
-//            startActivity(intent)
-//        }
-
-
+        // setting button
         findViewById<FloatingActionButton>(R.id.fabSettings).setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)

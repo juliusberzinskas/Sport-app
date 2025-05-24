@@ -1,0 +1,24 @@
+<!-- res/layout/item_profile_stat.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvStatDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025-05-20"
+        android:textStyle="bold"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tvStatDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🧍 65 kg    📏 170 cm    BMI: 22.5    Fat: 18%"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="4dp" />
+</LinearLayout>

@@ -56,7 +56,7 @@ object UserPreferences {
 
     fun saveUserWeight(context: Context, weight: Double) {
         val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        prefs.edit().putFloat("user_weight", weight.toFloat()).apply()
+        prefs.edit() { putFloat("user_weight", weight.toFloat()) }
     }
 
     fun getUserWeight(context: Context): Double {
@@ -77,5 +77,26 @@ object UserPreferences {
     fun clearAll(context: Context) {
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE).edit() { clear() }
     }
+
+    fun saveUserAge(context: Context, age: Int) {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        prefs.edit() { putInt("user_age", age) }
+    }
+
+    fun getUserAge(context: Context): Int {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return prefs.getInt("user_age", 0) // default 0 if not found
+    }
+
+    fun saveUserGender(context: Context, gender: String) {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        prefs.edit() { putString("user_gender", gender) }
+    }
+
+    fun getUserGender(context: Context): String {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return prefs.getString("user_gender", "male") ?: "male" // default to "male"
+    }
+
 
 }

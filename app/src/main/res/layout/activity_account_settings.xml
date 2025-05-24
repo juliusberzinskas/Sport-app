@@ -57,11 +57,21 @@
                 app:backgroundTint="@color/primary" />
         </FrameLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ūgio ir svorio keitimas"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="start"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary" />
+
         <EditText
             android:id="@+id/etWeight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:hint="Svoris (kg)"
             android:inputType="numberDecimal"
             android:backgroundTint="@android:color/white"
@@ -97,13 +107,6 @@
             android:layout_height="wrap_content"
             android:hint="Vardas"
             android:textColorHint="@color/textMuted" />
-
-        <Button
-            android:id="@+id/btnConfirmName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pakeisti Vardą"
-            android:layout_marginTop="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -142,10 +145,10 @@
             android:textColorHint="@color/textMuted" />
 
         <Button
-            android:id="@+id/btnChangePassword"
+            android:id="@+id/btnConfirmChanges"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pakeisti Slaptažodį"
+            android:text="Patvirtinti pakeitimus"
             android:layout_marginTop="8dp" />
 
     </LinearLayout>
