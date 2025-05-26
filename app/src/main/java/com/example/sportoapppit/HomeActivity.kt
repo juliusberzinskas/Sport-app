@@ -162,10 +162,6 @@ class HomeActivity : BaseActivity(), SensorEventListener {
             findViewById<View>(R.id.goalContainer).visibility = View.GONE
         }
 
-        // --- 4. Papildomi duomenys (jei reikia) ---
-        findViewById<TextView>(R.id.tvCalories).text = "850"
-        findViewById<TextView>(R.id.tvDistance).text = "5.2"
-        findViewById<TextView>(R.id.tvTime).text = "120"
 
         stepCounterService.start()
 
@@ -182,6 +178,14 @@ class HomeActivity : BaseActivity(), SensorEventListener {
             }
         }
         activeHandler.post(activeRunnable)
+
+        // =======LAIKINAS, mygtukas peržiūrėti Statistika.
+        val btnStatistic = findViewById<Button>(R.id.btnOpenStatistic)
+        btnStatistic.setOnClickListener {
+            val intent = Intent(this, StatisticActivity::class.java)
+            startActivity(intent)
+        }
+
 
         // setting button
         findViewById<FloatingActionButton>(R.id.fabSettings).setOnClickListener {
@@ -237,7 +241,7 @@ class HomeActivity : BaseActivity(), SensorEventListener {
                     findViewById<TextView>(R.id.home_page_vardas).text = name
 
                     // sitas bus perkeltas veliau. -Julius
-                    findViewById<TextView>(R.id.tvCalories)?.text = "${weight.toInt() * 13} kcal"
+                    findViewById<TextView>(R.id.tvCalories)?.text = "${weight.toInt() * 13} "
                     findViewById<TextView>(R.id.tvDistance)?.text = String.format("%.1f", height * 0.01)
 
                     // offline naudojimui

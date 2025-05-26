@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
-        android:text="Šiandienos tikslai"
+        android:text="Treniruotė"
         android:textColor="@color/textPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendarRecycler" />
@@ -131,7 +131,8 @@
             android:id="@+id/ivGoalImage"
             android:layout_width="87dp"
             android:layout_height="95dp"
-            android:src="@drawable/ic_run" />
+            android:src="@drawable/ic_run"
+            app:srcCompat="@drawable/ic_walk" />
 
         <!-- Tekstas + mygtukas -->
         <LinearLayout
@@ -145,7 +146,7 @@
                 android:id="@+id/tvGoalTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nubėgti 3 km."
+                android:text="Ėjimas"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -155,7 +156,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Bėgimas stiprina širdį ir mažina streso lygį."
+                android:text="gerina kraujotaką ir ramina nervų sistemą"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
@@ -207,7 +208,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="11 857"
+                android:text="0"
                 android:textColor="@android:color/white"
                 android:textSize="32sp"
                 android:textStyle="bold" />
@@ -256,19 +257,19 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="12dp"
+        android:weightSum="3"
         app:layout_constraintTop_toBottomOf="@+id/goalContainer"
-        tools:layout_editor_absoluteX="-16dp"
-        android:weightSum="3">
+        tools:layout_editor_absoluteX="-16dp">
 
         <!-- Kalorijos -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:padding="12dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/navItemInactive">
+            app:cardBackgroundColor="@color/navItemInactive"
+            app:cardCornerRadius="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -282,27 +283,28 @@
                     android:src="@drawable/ic_fire"
                     app:tint="@color/primary" />
 
-               <LinearLayout
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/tvCalories"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="850 "
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp" />
+                    android:layout_height="wrap_content">
 
-                   <TextView
-                       android:id="@+id/tvCaloriestext"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_marginTop="6dp"
-                       android:text="kcal"
-                       android:textColor="@android:color/secondary_text_dark"
-                       android:textSize="14sp" />
-               </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvCalories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="0"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvCaloriestext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text=" kcal"
+                        android:textColor="@android:color/secondary_text_dark"
+                        android:textSize="14sp" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -310,11 +312,11 @@
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:padding="12dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/navItemInactive">
+            app:cardBackgroundColor="@color/navItemInactive"
+            app:cardCornerRadius="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -337,7 +339,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="5.2 "
+                        android:text="0.0"
                         android:textColor="@android:color/white"
                         android:textSize="14sp" />
 
@@ -346,7 +348,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="km"
+                        android:text=" km"
                         android:textColor="@android:color/secondary_text_dark"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -357,11 +359,11 @@
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="80dp"
-            android:layout_weight="1"
             android:layout_margin="4dp"
+            android:layout_weight="1"
             android:padding="12dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="@color/navItemInactive">
+            app:cardBackgroundColor="@color/navItemInactive"
+            app:cardCornerRadius="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -384,7 +386,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="120 "
+                        android:text="0"
                         android:textColor="@android:color/white"
                         android:textSize="14sp" />
 
@@ -393,7 +395,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="min"
+                        android:text=" min"
                         android:textColor="@android:color/secondary_text_dark"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -403,17 +405,16 @@
 
     </LinearLayout>
 
-    <!-- ==========LAIKINAS mygtukas, istorijos puslapiui patikrinti -->
+    <!-- ==========LAIKINAS mygtukas  -->
+
+
     <Button
-        android:id="@+id/btnOpenHistory"
+        android:id="@+id/btnOpenStatistic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/primary"
-        android:text="Istorija"
+        android:text="Statistika"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressSection" />
 
 
@@ -426,7 +427,7 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="52dp"
             android:layout_gravity="bottom"
             android:layout_margin="12dp"
             android:background="@color/appBackground"
