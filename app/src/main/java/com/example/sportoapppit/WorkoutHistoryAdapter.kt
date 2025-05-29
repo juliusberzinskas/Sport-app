@@ -49,7 +49,7 @@ class WorkoutHistoryAdapter(
             val seconds = session.durationSec % 60
             holder.tvDuration.text = String.format("%d:%02d", minutes, seconds)
 
-            holder.tvCalories.text = session.calories.toString()
+            holder.tvCalories.text = session.calories.toInt().toString()
             holder.tvTime.text = session.dateTime.substringAfter(" ")
 
             holder.itemView.setOnClickListener {
