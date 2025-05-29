@@ -46,6 +46,7 @@
         <activity android:name=".ForgotPasswordActivity"/>
         <activity android:name=".ProfileActivity"/>
         <activity android:name=".StatisticActivity" />
+        <activity android:name=".WorkoutDetailsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
