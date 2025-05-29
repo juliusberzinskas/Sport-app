@@ -1,15 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/icon_home"
+        android:icon="@drawable/ic_home"
         android:title=" " />
     <item
-        android:id="@+id/navigation_workout"
-        android:icon="@drawable/icon_stats"
+        android:id="@+id/navigation_statistic"
+        android:icon="@drawable/ic_stats"
         android:title=" " />
-
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/ic_history"
+        android:title=" " />
     <item
         android:id="@+id/navigation_profile"
-        android:icon="@drawable/img_profile"
+        android:icon="@drawable/ic_profile"
         android:title=" " />
 </menu>

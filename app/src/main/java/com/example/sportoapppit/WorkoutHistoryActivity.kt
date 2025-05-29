@@ -22,6 +22,7 @@ class WorkoutHistoryActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.workout_history)
+        setupBottomNavigation()
 
         // setting button
         findViewById<FloatingActionButton>(R.id.fabSettings).setOnClickListener {

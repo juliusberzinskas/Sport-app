@@ -151,7 +151,7 @@ class HomeActivity : BaseActivity(), SensorEventListener {
            // btnStartGoal.setOnClickListener {
           //      println("Pradedama treniruotė: $plannedToday")}
 
-            //---laikinai, kol tikrinu kaip veikia workout_page
+            //---mygtukas pradėti tikslą
             btnStartGoal.setOnClickListener {
                 val intent = Intent(this, WorkoutActivity::class.java)
                 startActivity(intent)
@@ -179,12 +179,6 @@ class HomeActivity : BaseActivity(), SensorEventListener {
         }
         activeHandler.post(activeRunnable)
 
-        // =======LAIKINAS, mygtukas peržiūrėti Statistika.
-        val btnStatistic = findViewById<Button>(R.id.btnOpenStatistic)
-        btnStatistic.setOnClickListener {
-            val intent = Intent(this, StatisticActivity::class.java)
-            startActivity(intent)
-        }
 
 
         // setting button

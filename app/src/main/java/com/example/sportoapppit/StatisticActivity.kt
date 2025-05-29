@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import android.content.res.ColorStateList
 
-class StatisticActivity : AppCompatActivity() {
+class StatisticActivity : BaseActivity() {
 
     private lateinit var barChart: BarChart
 
@@ -43,6 +43,7 @@ class StatisticActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.statistic_page)
+        setupBottomNavigation()
 
         barChart = findViewById(R.id.statisticsChart)
 

@@ -13,9 +13,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
         when (this) {
             is HomeActivity -> bottomNavigationView.selectedItemId = R.id.navigation_home
-            is WorkoutHistoryActivity -> bottomNavigationView.selectedItemId = R.id.navigation_workout
+            is StatisticActivity -> bottomNavigationView.selectedItemId = R.id.navigation_statistic
+            is WorkoutHistoryActivity -> bottomNavigationView.selectedItemId = R.id.navigation_history
             is ProfileActivity -> bottomNavigationView.selectedItemId = R.id.navigation_profile
+
         }
+
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -27,7 +30,15 @@ abstract class BaseActivity : AppCompatActivity() {
                     }
                     true
                 }
-                R.id.navigation_workout -> {
+                R.id.navigation_statistic -> {
+                    if (this !is StatisticActivity) {
+                        val intent = Intent(this, StatisticActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                        startActivity(intent)
+                    }
+                    true
+                }
+                R.id.navigation_history -> {
                     if (this !is WorkoutHistoryActivity) {
                         val intent = Intent(this, WorkoutHistoryActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -43,6 +54,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     }
                     true
                 }
+
                 else -> false
             }
         }
