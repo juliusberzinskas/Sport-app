@@ -2,6 +2,7 @@ package com.example.sportoapppit
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -47,6 +48,8 @@ class RegisterActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Registracija sėkminga!", Toast.LENGTH_SHORT).show()
+
+                        Log.d("DEBUG", "Saved birthdate: ${UserPreferences.getUserBirthdate(this)}")
 
                         // prisijungus nukelia i home activity
                         val intent = Intent(this, ProfileSignInActivity::class.java)

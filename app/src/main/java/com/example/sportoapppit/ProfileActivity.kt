@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,6 +20,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 class ProfileActivity : BaseActivity() {
 
@@ -49,20 +56,6 @@ class ProfileActivity : BaseActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerProfileStats)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val tvWeight = findViewById<TextView>(R.id.tvWeight)
-        val tvHeight = findViewById<TextView>(R.id.tvHeight)
-
-        // Load user data
-        val age = UserPreferences.getUserAge(this)
-        val weight = UserPreferences.getUserWeight(this)
-        val height = UserPreferences.getUserHeight(this)
-
-        // Update UI
-        tvAge.text = "$age m."
-        tvWeight.text = "${weight.toInt()} kg"
-        tvHeight.text = "${height.toInt()} cm"
-
-
         val userId = auth.currentUser?.uid ?: return
 
         db.collection("users")
@@ -86,11 +79,30 @@ class ProfileActivity : BaseActivity() {
 
     private fun loadProfileData() {
         val name = UserPreferences.getUserName(this)
-        val age = UserPreferences.getUserAge(this)
+        val birthdate = UserPreferences.getUserBirthdate(this)
         val avatarUri = UserPreferences.getAvatarUri(this)
+        val gender = UserPreferences.getUserGender(this)
+
+        fun calculateAge(birthdate: String): Int {
+            return try {
+                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val dob = formatter.parse(birthdate)
+                val today = Calendar.getInstance()
+                val birth = Calendar.getInstance().apply { time = dob!! }
+
+                var age = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
+                if (today.get(Calendar.DAY_OF_YEAR) < birth.get(Calendar.DAY_OF_YEAR)) {
+                    age--
+                }
+                age
+            } catch (e: Exception) {
+                0
+            }
+        }
 
         tvName.text = name
-        tvAge.text = "Amžius: $age"
+        val age = birthdate?.let { calculateAge(it) } ?: 0
+        tvAge.text = "$age m."
 
         avatarUri?.let {
             try {
@@ -100,6 +112,29 @@ class ProfileActivity : BaseActivity() {
             } catch (e: Exception) {
                 imgAvatar.setImageResource(R.drawable.icon_file_upload)
             }
+        }
+
+        val tvWeight = findViewById<TextView>(R.id.tvWeight)
+        val tvHeight = findViewById<TextView>(R.id.tvHeight)
+
+        // Load user data
+        val weight = UserPreferences.getUserWeight(this)
+        val height = UserPreferences.getUserHeight(this)
+
+        tvWeight.text = "${weight.toInt()} kg"
+        tvHeight.text = "${height.toInt()} cm"
+
+        val genderIcon = findViewById<ImageView>(R.id.imgGenderIcon)
+        when (gender.lowercase()) {
+            "male" -> {
+                genderIcon.setImageResource(R.drawable.ic_gender_male)
+                genderIcon.visibility = View.VISIBLE
+            }
+            "female" -> {
+                genderIcon.setImageResource(R.drawable.ic_gender_female)
+                genderIcon.visibility = View.VISIBLE
+            }
+            else -> genderIcon.visibility = View.GONE
         }
     }
 

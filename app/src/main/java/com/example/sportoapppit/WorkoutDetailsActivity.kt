@@ -36,7 +36,7 @@ class WorkoutDetailsActivity : AppCompatActivity() {
         tvType.text = session.type.replaceFirstChar { it.uppercase() }
         tvDate.text = formatDate(session.dateTime)
         tvTimer.text = formatDuration(session.durationSec)
-        tvCalories.text = "${session.calories}"
+        tvCalories.text = session.calories.toInt().toString()
         tvDistance.text = String.format("%.2f", session.distanceKm)
         tvSteps.text = "${session.steps}"
         tvSpeed.text = calculateSpeed(session)

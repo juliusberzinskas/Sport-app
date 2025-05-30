@@ -36,6 +36,11 @@ class WorkoutHistoryActivity : BaseActivity() {
         loadWorkoutHistoryFromFirestore()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadWorkoutHistoryFromFirestore()
+    }
+
     private fun loadWorkoutHistoryFromFirestore() {
         val user = auth.currentUser ?: return
 
@@ -83,4 +88,5 @@ class WorkoutHistoryActivity : BaseActivity() {
             "Kita"
         }
     }
+
 }

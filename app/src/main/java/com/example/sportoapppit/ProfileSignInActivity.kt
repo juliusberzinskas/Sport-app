@@ -81,14 +81,21 @@ class ProfileSignInActivity : AppCompatActivity() {
                 else -> null
             }
 
+            if (selectedGender == null) {
+                Toast.makeText(this, "Pasirinkite lytį", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+// Save to Firestore
             val userMap = hashMapOf(
                 "name" to name,
                 "birthday" to birthday,
                 "weight" to weight,
                 "height" to height,
-                "gender" to selectedGender,
+                "gender" to selectedGender, // <--- THIS LINE SAVES IT
                 "avatarUri" to avatar
             )
+
 
             if (selectedGender == null) {
                 Toast.makeText(this, "Pasirinkite lytį", Toast.LENGTH_SHORT).show()
@@ -97,18 +104,20 @@ class ProfileSignInActivity : AppCompatActivity() {
 
             db.collection("users").document(userId).set(userMap)
                 .addOnSuccessListener {
-                    // ✅ Save locally for use in Settings/Home/etc.
                     UserPreferences.saveUserName(this, name)
                     UserPreferences.saveUserWeight(this, weight)
                     UserPreferences.saveUserHeight(this, height)
                     if (avatar != null) {
                         UserPreferences.saveAvatarUri(this, avatar)
                     }
+                    UserPreferences.saveUserBirthdate(this, birthday)
+                    UserPreferences.saveUserGender(this, selectedGender)
 
                     Toast.makeText(this, "Profilis išsaugotas!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, HomeActivity::class.java))
                     finish()
                 }
+
                 .addOnFailureListener {
                     Toast.makeText(this, "Nepavyko išsaugoti profilio", Toast.LENGTH_SHORT).show()
                 }

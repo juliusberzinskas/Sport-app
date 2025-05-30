@@ -7,6 +7,7 @@ import androidx.core.content.edit
 object UserPreferences {
     private const val PREF_NAME = "user_data"
     private const val KEY_NAME = "user_name"
+    private const val KEY_BIRTHDATE = "user_birthdate"
 
     fun saveUserName(context: Context, name: String) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -74,10 +75,6 @@ object UserPreferences {
         return prefs.getFloat("user_height", 0f).toDouble()
     }
 
-    fun clearAll(context: Context) {
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE).edit() { clear() }
-    }
-
     fun saveUserAge(context: Context, age: Int) {
         val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         prefs.edit() { putInt("user_age", age) }
@@ -98,5 +95,19 @@ object UserPreferences {
         return prefs.getString("user_gender", "male") ?: "male" // default to "male"
     }
 
+    fun setUserBirthdate(context: Context, birthdate: String) {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        prefs.edit() { putString("birthdate", birthdate) }
+    }
+
+    fun saveUserBirthdate(context: Context, birthdate: String) {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        prefs.edit() { putString(KEY_BIRTHDATE, birthdate) }
+    }
+
+    fun getUserBirthdate(context: Context): String? {
+        val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return prefs.getString(KEY_BIRTHDATE, null)
+    }
 
 }

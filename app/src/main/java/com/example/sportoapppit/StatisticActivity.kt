@@ -1,5 +1,6 @@
 package com.example.sportoapppit
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
@@ -18,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import android.content.res.ColorStateList
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class StatisticActivity : BaseActivity() {
 
@@ -43,7 +45,6 @@ class StatisticActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.statistic_page)
-        setupBottomNavigation()
 
         barChart = findViewById(R.id.statisticsChart)
 
@@ -109,6 +110,12 @@ class StatisticActivity : BaseActivity() {
         updateChart()
         updateCardSelection("steps")
         updatePeriodSelection("day")
+
+        // setting button
+        findViewById<FloatingActionButton>(R.id.fabSettings).setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun updateChart() {

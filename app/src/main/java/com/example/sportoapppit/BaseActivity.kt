@@ -1,7 +1,6 @@
 package com.example.sportoapppit
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -16,9 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
             is StatisticActivity -> bottomNavigationView.selectedItemId = R.id.navigation_statistic
             is WorkoutHistoryActivity -> bottomNavigationView.selectedItemId = R.id.navigation_history
             is ProfileActivity -> bottomNavigationView.selectedItemId = R.id.navigation_profile
-
         }
-
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -54,7 +51,6 @@ abstract class BaseActivity : AppCompatActivity() {
                     }
                     true
                 }
-
                 else -> false
             }
         }
