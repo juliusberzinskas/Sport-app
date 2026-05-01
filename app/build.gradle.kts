@@ -9,6 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        manifestPlaceholders["MAPS_API_KEY"] = project.findProperty("MAPS_API_KEY") ?: ""
         applicationId = "com.example.sportoapppit"
         minSdk = 24
         targetSdk = 35
